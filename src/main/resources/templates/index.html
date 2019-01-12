@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>首页</title>
+    <link th:href="@{/resources/iview/styles/iview.css}" rel="stylesheet">
+    <style scoped>
+
+        [v-cloak] {
+            display: none;
+        }
+
+        .layout {
+            border: 0px solid #d7dde4;
+            background: #f5f7f9;
+            position: relative;
+            border-radius: 0px;
+            overflow: hidden;
+        }
+
+        .layout-logo {
+            width: 170px;
+            height: 90px;
+            border-radius: 3px;
+            float: left;
+            font-size: 26px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .layout-nav {
+            margin-right: 20px;
+            float: right;
+
+        }
+
+        .layout-footer-center {
+            text-align: center;
+            height: 30px;
+            line-height: 30px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="layout">
+        <layout>
+            <i-header>
+                <i-menu mode="horizontal" theme="dark" active-name="1">
+                    <div class="layout-logo">管理平台</div>
+                    <div class="layout-nav">
+                        <menu-item name="1">
+                            <Icon type="ios-navigate"></Icon>
+                            Item 1
+                        </menu-item>
+                        <menu-item name="2">
+                            <Icon type="ios-keypad"></Icon>
+                            Item 2
+                        </menu-item>
+                        <menu-item name="3">
+                            <Icon type="ios-analytics"></Icon>
+                            Item 3
+                        </menu-item>
+                        <menu-item name="4">
+                            <Icon type="ios-paper"></Icon>
+                            Item 4
+                        </menu-item>
+                    </div>
+                </i-menu>
+            </i-header>
+            <layout>
+                <!-- 左侧菜单栏 -->
+                <sider ref="menuSider" hide-trigger :style="{background: '#fff'}">
+                    <i-menu ref="ownerMenu" :open-names="openNames" accordion theme="light" width="auto" :style="{height:layoutHeight}" @on-select="selectMenu">
+                        <submenu :name="item.id" v-for="(item,index) in ownerMenusData">
+                            <template slot="title">
+                                <i style="font-size: 20px;" :class="'ivu-icon ivu-icon-'+item.iconCls"></i>
+                                {{item.name}}
+                            </template>
+                            <menu-item :name="menu.id" v-for="(menu,index2) in item.children">
+                                <i style="font-size: 18px;" :class="'ivu-icon ivu-icon-'+menu.iconCls"></i> {{menu.name}}
+                            </menu-item>
+                        </submenu>
+                    </i-menu>
+                </sider>
+                <layout :style="{padding: '24px 0px 0px 24px'}">
+                    <content ref="content" :style="{padding: '12px', minHeight: contentHeight, background: '#fff'}">
+                        <iframe id="contentFrame" ref="contentFrame" :src="contentFrameUrl" frameborder="0"
+                                :style="{width:'100%',minHeight: contentFrameHeight}"></iframe>
+                    </content>
+
+                    <footer class="layout-footer-center">2019 &copy; Swell</footer>
+                </layout>
+            </layout>
+        </layout>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/resources/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/resources/iview/vue.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/iview/iview.min.js}"></script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            //
+            ownerMenusData: [],//菜单数据
+            openNames: [""],//展开的菜单
+            currentMenuName: "",//
+            currentSubMenuName: "",
+            ownerMenusUrl: __webRoot + "/platform/menu/ownerList",
+            //
+            contentHeight: "280px",
+            contentFrameHeight: "200px",
+            layoutHeight: "500px",
+
+            //
+            contentFrameUrl: "",//当前iframe地址
+
+
+        },
+        mounted: function () {
+            //设置主体高度
+            this.contentHeight = $.getContentHeight() + "px";
+
+            //设置主体frame高度
+            this.contentFrameHeight = ($.getContentHeight() - 30) + "px";
+
+            //左侧菜单栏高度
+            this.layoutHeight = (window.innerHeight - this.$refs.menuSider.$el.offsetTop) + "px";
+
+            //加载拥有的菜单
+            this.loadOwnerMenus();
+        },
+        methods: {
+            loadOwnerMenus: function () {
+                var self = this;
+                $.ajaxGet(self.ownerMenusUrl, {}, function (rs) {
+                    if (rs.code == "0000") {
+                        self.ownerMenusData = rs.data;
+                        self.openNames = [rs.data[0].id];
+                        self.$nextTick(function () {
+                            self.$refs.ownerMenu.updateOpened();
+                            self.$refs.ownerMenu.updateActiveName();
+                        });
+                    }
+                });
+            },
+            selectMenu: function (name) {
+                var self = this;
+                this.ownerMenusData.forEach(function (item) {
+                    item.children.forEach(function (menu) {
+                        if (menu.id === name) {
+                            self.contentFrameUrl = menu.url;
+                            self.currentSubMenuName = menu.name;
+                            self.currentMenuName = item.name;
+                        }
+                    });
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

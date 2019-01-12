@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements>
+    <statement id="platform.menu.queryAll">
+        <![CDATA[
+      	SELECT
+              t.*
+          FROM
+              platform_menu t
+              LEFT JOIN platform_role_menu t1 ON t.id = t1.menu_id
+              LEFT JOIN platform_user_role t2 ON t1.role_id = t2.role_id
+          GROUP BY
+              t.id
+          ORDER BY
+              t.sort_no
+      ]]>
+    </statement>
+
+    <statement id="platform.menu.queryByUser">
+        <![CDATA[
+      	SELECT
+              t.*
+          FROM
+              platform_menu t
+              LEFT JOIN platform_role_menu t1 ON t.id = t1.menu_id
+              LEFT JOIN platform_user_role t2 ON t1.role_id = t2.role_id
+          WHERE
+              t2.user_id = :userId
+          GROUP BY
+              t.id
+          ORDER BY
+              t.sort_no
+      ]]>
+    </statement>
+
+    <statement id="platform.menu.queryIdsByUser">
+        <![CDATA[
+      	SELECT
+              t.id
+          FROM
+              platform_menu t
+              LEFT JOIN platform_role_menu t1 ON t.id = t1.menu_id
+              LEFT JOIN platform_user_role t2 ON t1.role_id = t2.role_id
+          WHERE
+              t2.user_id = :userId
+          GROUP BY
+              t.id
+          ORDER BY
+              t.sort_no
+      ]]>
+    </statement>
+
+</statements>

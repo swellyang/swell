@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>请登录</title>
+    <link th:href="@{/resources/iview/styles/iview.css}" rel="stylesheet">
+    <style scoped>
+        #app {
+            padding: 32px;
+            height: calc(100vh);
+            background-image: url("./resources/imgs/bg.png");
+            background-size: cover;
+        }
+
+        .layout {
+            width: 400px;
+            height: 400px;
+            padding: 20px;
+            position: absolute;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        .logo_area {
+            margin-bottom: 20px;
+        }
+
+        .layout .ivu-icon {
+            font-size: 18px !important;
+        }
+
+        .card {
+            text-align: center;
+            box-shadow: 4px 4px 20px #000000;
+            background: rgba(96, 125, 139, 0.49);
+
+        }
+
+        .card * {
+            color: #fff;
+        }
+
+        .card .ivu-btn-primary {
+            background-color: #516d88;
+            border-color: #4e6986;
+        }
+
+    </style>
+</head>
+
+<body>
+<div id="app">
+    <div class="layout" v-cloak :style={left:layoutLeft,top:layoutTop}>
+        <card :bordered="false" class="card">
+            <div class="logo_area">
+                <h4>欢迎登录</h4>
+            </div>
+            <p>
+                <i-form ref="loginForm" :model="loginForm">
+                    <form-item prop="username">
+                        <i-input autofocus type="text" v-model="loginForm.username" placeholder="账号" @on-keyup.enter="handleSubmit('loginForm')">
+                        </i-input>
+                    </form-item>
+
+                    <form-item prop="password">
+                        <i-input type="password" v-model="loginForm.password" placeholder="密码" @on-keyup.enter="handleSubmit('loginForm')">
+                        </i-input>
+                    </form-item>
+
+                    <form-item>
+                        <i-button type="primary" @click="handleSubmit('loginForm')" long>登录</i-button>
+                    </form-item>
+
+                    <form-item style="text-align: right;margin-bottom: 0px;">
+                        <a style="color: gray;" @click="forgetPassword();">忘记密码</a> &nbsp;
+                    </form-item>
+                </i-form>
+            </p>
+        </card>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/resources/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/resources/iview/vue.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/iview/iview.min.js}"></script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+
+            loginUrl: __webRoot + "/login",
+            indexUrl: __webRoot + "/",
+
+            layoutLeft: "200px",
+            layoutTop: "200px",
+            loginForm: {
+                username: '',
+                password: ''
+            }
+        },
+        mounted: function () {
+            this.layoutLeft = (window.innerWidth / 2 - 400 / 2) + "px";
+            this.layoutTop = (window.innerHeight / 2 - 400 / 2) + "px";
+        },
+        methods: {
+            handleSubmit: function () {
+                var self = this;
+                $.ajaxPost(this.loginUrl, {
+                    username: self.loginForm.username,
+                    password: self.loginForm.password
+                }, function (rs) {
+                    console.log(rs);
+                    if (rs.code != "0000") {
+                        self.$Message.error(rs.msg);
+                        return;
+                    } else {
+                        self.$Message.success("登陆成功");
+                    }
+                    window.setTimeout(function () {
+                        window.top.location.href = self.indexUrl;
+                    }, 500);
+                });
+            },
+        }
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>12306</title>
+    <link th:href="@{/resources/iview/styles/iview.css}" rel="stylesheet">
+    <style scoped>
+        [v-cloak] {
+            display: none;
+        }
+
+        .ivu-table th {
+            background: linear-gradient(to bottom, #00BCD4, #069fb3, #00BCD4);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="layout" ref="layout" v-cloak>
+        <i-row>
+            <i-col span="24">
+                <i-form :label-width="60" inline>
+                    <form-item label="出发站">
+                        <i-select v-model="fromStation" filterable clearable not-found-text="无匹配数据">
+                            <i-option v-for="item in stations" :value="item.code" :key="item.code">{{ item.name }}</i-option>
+                        </i-select>
+                    </form-item>
+                    <form-item label="到达站">
+                        <i-select v-model="toStation" filterable clearable not-found-text="无匹配数据">
+                            <i-option v-for="item in stations" :value="item.code" :key="item.code">{{ item.name }}</i-option>
+                        </i-select>
+                    </form-item>
+                    <form-item label="出发日期">
+                        <date-picker type="date" v-model="trainDate" placement="bottom-end" style="width: 200px"></date-picker>
+                    </form-item>
+                    <i-button type="primary" @click="doQuery()" icon="ios-search">查询</i-button>
+                </i-form>
+            </i-col>
+        </i-row>
+        <i-row>
+            <i-col span="24">
+                <i-form :label-width="60" inline>
+                    <form-item label="筛选">
+                        <checkbox v-model="filterG" @on-change="doFilter">G</checkbox>
+                        <checkbox v-model="filterD" @on-change="doFilter">D</checkbox>
+                        <checkbox v-model="filterT" @on-change="doFilter">T</checkbox>
+                        <checkbox v-model="filterZ" @on-change="doFilter">Z</checkbox>
+                        <checkbox v-model="filterK" @on-change="doFilter">K</checkbox>
+                    </form-item>
+                </i-form>
+            </i-col>
+        </i-row>
+        <i-row>
+            <i-col span="24" class="table1">
+                <i-table :height="tableHeight" border stripe :columns="columns" :data="dataList"></i-table>
+            </i-col>
+        </i-row>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/resources/js/station.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/resources/iview/vue.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/iview/iview.min.js}"></script>
+<script type="text/javascript">
+
+    console.log("ok1" + new Date().pattern());
+    var app = new Vue({
+        el: '#app',
+        data: {
+            //
+            initUrl: __webRoot + "/business/travel/init",
+            queryTickitsUrl: __webRoot + "/business/travel/queryTickits",
+            //
+
+            fromStation: "LON",
+            toStation: "XCF",
+            trainDate: new Date().pattern("yyyy-MM-dd"),
+
+            filterG: true,
+            filterD: true,
+            filterT: true,
+            filterZ: true,
+            filterK: true,
+
+            stations: stations,
+
+            tableHeight: 200,
+            dataList: [],
+            totalDataList: [],
+            columns: [{
+                title: '序号',
+                key: 'id',
+                width: 60,
+                align: "center",
+                type: "index"
+            }, {
+                title: '车次',
+                key: 'checi',
+                width: 100,
+                render: function (h, params) {
+                    return h("div", {
+                        style: {
+                            fontWeight: "bold"
+                        }
+                    }, params.row.checi);
+                }
+            }, {
+                title: '出发站到达站',
+                key: 'chufazhan',
+                width: 160,
+                render: function (h, params) {
+                    var showText = app.getStationName(params.row.chufazhan) + " → " + app.getStationName(params.row.daodazhan);
+                    return h("div", showText);
+                }
+            }, {
+                title: '出发时间到达时间',
+                key: 'daodashijian',
+                width: 160,
+                render: function (h, params) {
+                    var showText = params.row.chufashijian + " → " + params.row.daodashijian;
+                    return h("div", showText);
+                }
+            }, {
+                title: '历时',
+                key: 'lishi',
+                width: 100,
+            }, {
+                title: '一等座',
+                key: 'yidengzuo',
+            }, {
+                title: '二等座',
+                key: 'erdengzuo',
+            }, {
+                title: '软卧',
+                key: 'ruanwo',
+            }, {
+                title: '硬卧',
+                key: 'yingwo',
+            }, {
+                title: '硬座',
+                key: 'yingzuo',
+            }, {
+                title: '无座',
+                key: 'wuzuo',
+            }, {
+                title: '操作',
+                key: 'action',
+                width: 120,
+                render: function (h, params) {
+                    var btns = [];
+                    btns.push(h('Button', {
+                        props: {
+                            type: 'primary',
+                            size: ''
+                        },
+                        style: {
+                            marginLeft: '5px'
+                        },
+                        on: {
+                            click: function () {
+                                //app.viewReportInfo(params.row)
+                            }
+                        }
+                    }, '预定'));
+                    return h('div', [btns]);
+                }
+            }],
+        },
+        mounted: function () {
+            this.tableHeight = $(window).innerHeight() - 120;
+            console.log("ok2" + new Date().pattern());
+        },
+        methods: {
+            doFilter: function () {
+                var self = this;
+                this.dataList = [];
+                for (var i = 0; i < this.totalDataList.length; i++) {
+                    var item = this.totalDataList[i];
+                    if (!this.filterG && item.checi.split("")[0] == "G") {
+                        continue;
+                    } else if (!this.filterD && item.checi.split("")[0] == "D") {
+                        continue;
+                    } else if (!this.filterT && item.checi.split("")[0] == "T") {
+                        continue;
+                    } else if (!this.filterZ && item.checi.split("")[0] == "Z") {
+                        continue;
+                    } else if (!this.filterK && item.checi.split("")[0] == "K") {
+                        continue;
+                    }
+                    this.dataList.push(item);
+                }
+                this.$Spin.hide();
+            },
+
+            doQuery: function () {
+                var self = this;
+                this.$Spin.show();
+                this.dataList = [];
+                $.ajaxGet(this.queryTickitsUrl, {
+                    fromStation: self.fromStation,
+                    toStation: self.toStation,
+                    trainDate: self.trainDate.pattern("yyyy-MM-dd")
+                }, function (rs) {
+                    if (rs && rs.status && rs.data) {
+                        var resultList = rs.data.result;
+                        for (var i = 0; i < resultList.length; i++) {
+                            var result = resultList[i].split("|");
+                            self.totalDataList.push({
+                                checi: result[3],
+                                chufazhan: result[6],
+                                daodazhan: result[7],
+                                chufashijian: result[8],
+                                daodashijian: result[9],
+                                lishi: result[10],
+
+                                yidengzuo: result[31],
+                                erdengzuo: result[30],
+
+                                yingwo: result[17],
+                                yingzuo: result[29],
+                                ruanwo: result[23],
+
+                                wuzuo: result[26],
+                            });
+                        }
+
+                        self.doFilter();
+                    }
+                });
+            },
+
+            getStationName: function (code) {
+                for (var i = 0; i < stations.length; i++) {
+                    if (stations[i].code == code) {
+                        return stations[i].name;
+                    }
+                }
+                return "";
+            }
+        }
+    });
+</script>
+</body>
+</html>

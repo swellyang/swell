@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "custom.security.login-page",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.security.login-page'"
+  },
+  {
+    "name": "custom.security.login-processing-url",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.security.login-processing-url'"
+  },
+  {
+    "name": "custom.security.logout-url",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.security.logout-url'"
+  },
+  {
+    "name": "custom.security.permit-all",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.security.permit-all'"
+  },
+  {
+    "name": "custom.security.ignore-all",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.security.ignore-all'"
+  },
+  {
+    "name": "custom.security.access-denied-page",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.security.access-denied-page'"
+  }
+]}

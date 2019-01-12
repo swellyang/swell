@@ -1,0 +1,114 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body,
+.app {
+    height: 100%;
+}
+
+body {
+    text-align: center;
+}
+
+.app {
+    background: #666;
+    display: table;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.app > div {
+    display: table-row;
+}
+
+.header {
+    background: #fff;
+    height: 20vh;
+    line-height: 20vh;
+    font-size: 45px;
+    color: #45a5f3;
+    font-weight: 500;
+}
+
+.logo {
+    vertical-align: -23px;
+}
+
+.footer {
+    background: #fff;
+    height: 20vh;
+}
+
+.copyright {
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    background: #cccccc36;
+    width: 100%
+}
+
+.copyright span {
+    padding-right: 45px;
+}
+
+.main {
+    background: url("../imgs/bg.png") center center no-repeat;
+}
+
+.main .wrap {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form {
+    height: 45vh;
+    width: 50vh;
+    background: #fff;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+.login-form .title{
+    font-size: 24px;
+    font-weight: bold;
+    color: #45a5f3;
+    height: 33%;
+}
+.login-form .user-login .ivu-input{
+    font-size: 14px !important;
+    height: 40px;
+}
+.user-login .ivu-btn-primary{
+    width: 100%;
+    font-size: 14px;
+    height: 40px;
+}
+.user-login form{
+    width: 70%;
+}
+.ivu-icon-ios-lock-outline{
+    background: url("../imgs/mima.png") no-repeat;
+    width: 15px;
+    height: 15px;
+    background-size: 15px 15px !important;
+}
+.ivu-icon-ios-person-outline:before {
+    content: "";
+}
+.ivu-icon-ios-person-outline{
+    background: url("../imgs/zhanghao.png") no-repeat;
+    width: 15px;
+    height: 15px;
+    background-size: 15px 15px !important;
+}
