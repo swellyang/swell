@@ -8,5 +8,5 @@ import com.swell.code.platform.entity.PlatformResource;
 
 public interface PlatformResourceRepository extends BaseRepository<PlatformResource, String> {
 
-	List<PlatformResource> findAllByNameLikeOrCodeLike(String name, String code, Sort sort);
+	List<PlatformResource> findAllByNameLikeOrUrlLike(String name, String url, Sort sort);
 }

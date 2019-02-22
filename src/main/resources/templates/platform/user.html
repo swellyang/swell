@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>角色管理</title>
+    <title>用户管理</title>
     <link th:href="@{/resources/iview/styles/iview.css}" rel="stylesheet">
     <style scoped>
         [v-cloak] {
@@ -18,35 +18,55 @@
 <div id="app">
     <div class="layout" ref="layout" v-cloak>
         <i-row>
-            <i-col span="24" style="text-align: right;margin-bottom: 10px;">
-                <i-button ref="addBtn" type="primary" @click="add()" icon="plus-round">新增</i-button>
+            <i-col span="18">
+                <i-form ref="queryForm" :model="queryForm" :label-width="60" inline>
+                    <form-item label="关键字">
+                        <i-input type="text" clearable v-model="queryForm.searchText" placeholder="关键字"></i-input>
+                    </form-item>
+                    <form-item label="开始日期">
+                        <date-picker type="date" v-model="queryForm.startDate" @on-change="queryForm.startDate=$event" placeholder="注册日期"
+                                     style="width: 200px"></date-picker>
+                    </form-item>
+                    <form-item label="截止日期">
+                        <date-picker type="date" v-model="queryForm.endDate" @on-change="queryForm.endDate=$event" placeholder="注册日期"
+                                     style="width: 200px"></date-picker>
+                    </form-item>
+                    <i-button type="primary" @click="loadDataList()" icon="ios-search">查询</i-button>
+                </i-form>
+            </i-col>
+            <i-col span="6" style="text-align: right;">
+                <i-button type="primary" @click="add()" icon="plus-round">新增</i-button>
             </i-col>
         </i-row>
         <i-row>
             <i-col span="24">
                 <i-table border stripe :columns="columns" :data="dataList" :height="tableHeight"></i-table>
+                <page :page-size="pageSize" :current="pageNumber" :total="total" show-total show-sizecr @on-change="loadDataList"></page>
             </i-col>
         </i-row>
     </div>
-    <modal v-model="modal" title="编辑角色" @on-ok="save" @on-cancel="cancel">
+    <modal v-model="modal" title="编辑用户信息" @on-ok="save" @on-cancel="cancel">
         <div :style="{ height:modalHeight+'px'}" style="padding: 10px 20px;max-width:1000px;margin:auto;overflow: auto;">
             <i-form ref="editForm" :model="editForm" :label-width="80" style="padding: 10px 20px;">
-                <form-item label="角色名称">
-                    <i-input type="text" v-model="editForm.name" placeholder="角色名称"></i-input>
+                <form-item label="账号">
+                    <i-input type="text" v-model="editForm.username" placeholder="账号" :disabled="editForm.id!=null"></i-input>
                 </form-item>
-                <form-item label="角色代码">
-                    <i-input type="text" v-model="editForm.code" placeholder="角色代码"></i-input>
+                <form-item label="姓名">
+                    <i-input type="text" v-model="editForm.realName" placeholder="姓名"></i-input>
                 </form-item>
-                <form-item label="状态">
-                    <i-switch v-model="editForm.status" :true-value="trueValue" :false-value="falseValue"></i-switch>
+                <form-item label="出生日期">
+                    <i-input type="text" v-model="editForm.birthday" placeholder="出生日期"></i-input>
+                </form-item>
+                <form-item label="性别">
+                    <i-input type="text" v-model="editForm.gender" placeholder="性别"></i-input>
+                </form-item>
+                <form-item label="联系方式">
+                    <i-input type="text" v-model="editForm.contactInformation" placeholder="联系方式"></i-input>
+                </form-item>
+                <form-item label="启用">
+                    <i-switch v-model="editForm.enabled" :true-value="trueValue" :false-value="falseValue"></i-switch>
                 </form-item>
             </i-form>
-        </div>
-    </modal>
-
-    <modal v-model="bindMenuModal" title="绑定菜单" @on-ok="saveBindMenus" @on-cancel="cancelBindMenus">
-        <div :style="{ height:modalHeight+'px'}" style="padding: 10px 20px;max-width:1000px;margin:auto;overflow: auto;">
-            <tree ref="treeMenu" :data="menuList" show-checkbox multiple></tree>
         </div>
     </modal>
 </div>
@@ -57,12 +77,15 @@
 <script type="text/javascript" th:src="@{/resources/iview/iview.min.js}"></script>
 <script type="text/javascript">
 
-    var roleEntity = function () {
+    var userEntity = function () {
         return {
             id: "",
-            name: "",
-            code: "",
-            status: YesOrNo.yes,
+            username: "",
+            realName: "",
+            birthday: "",
+            gender: "",
+            contactInformation: "",
+            enabled: YesOrNo.yes,
         }
     }
 
@@ -70,22 +93,25 @@
         el: '#app',
         data: {
             //
-            listUrl: __webRoot + "/platform/role/list",
-            saveUrl: __webRoot + "/platform/role/save",
-            saveRoleMenuUrl: __webRoot + "/platform/role/saveRoleMenu",
-            listMenuUrl: __webRoot + "/platform/menu/treeData",
+            listUrl: __webRoot + "/platform/user/list",
+            saveUrl: __webRoot + "/platform/user/save",
             //
             tableHeight: 200,
             modal: false,
-            bindMenuModal: false,
             modalHeight: 500,
 
+            queryForm: {
+                searchText: "",
+                startDate: "",
+                endDate: "",
+            },
 
-            curRoleId: "",
-
+            total: 0,
+            pageNumber: 1,
+            pageSize: 10,
             dataList: [],
             menuList: [],
-            editForm: roleEntity(),
+            editForm: userEntity(),
             trueValue: YesOrNo.yes,
             falseValue: YesOrNo.no,
             columns: [{
@@ -95,19 +121,28 @@
                 align: "center",
                 type: "index"
             }, {
-                title: '角色名称',
-                key: 'name',
+                title: '账号',
+                key: 'username',
             }, {
-                title: '角色代码',
-                key: 'code'
+                title: '姓名',
+                key: 'realName'
+            }, {
+                title: '性别',
+                key: 'gender'
+            }, {
+                title: '出生日期',
+                key: 'birthday'
+            }, {
+                title: '联系方式',
+                key: 'contactInformation'
             }, {
                 title: '状态',
                 key: 'status',
                 align: "center",
                 width: 120,
                 render: function (h, params) {
-                    var color = params.row.status === YesOrNo.yes ? 'success' : 'error';
-                    var text = params.row.status === YesOrNo.yes ? '正常' : '禁用';
+                    var color = params.row.enabled? 'success' : 'error';
+                    var text = params.row.enabled? '正常' : '禁用';
                     return h('tag', {
                         props: {
                             type: "dot",
@@ -143,21 +178,6 @@
                             }
                         }
                     }, '编辑'));
-
-                    btns.push(h('Button', {
-                        props: {
-                            type: 'primary',
-                            size: 'small'
-                        },
-                        style: {
-                            marginRight: '5px'
-                        },
-                        on: {
-                            click: function () {
-                                app.bindMenu(params.row)
-                            }
-                        }
-                    }, '菜单'));
                     return h('div', [btns]);
                 }
             }]
@@ -170,14 +190,21 @@
         methods: {
             loadDataList: function () {
                 var self = this;
-                $.ajaxGet(self.listUrl, {}, function (rs) {
-                    if (rs.code == "0000") {
-                        self.dataList = rs.data;
+                $.ajaxGet(self.listUrl, {
+                    pageNumber: self.pageNumber,
+                    pageSize: self.pageSize,
+                    searchText: self.queryForm.searchText,
+                    startDate: self.queryForm.startDate ? self.queryForm.startDate.pattern() : "",
+                    endDate: self.queryForm.endDate ? self.queryForm.endDate.pattern() : "",
+                }, function (res) {
+                    if (res.code == "0000" && res.data) {
+                        self.dataList = res.data.content;
+                        self.total = res.data.totalElements;
                     }
                 });
             },
             add: function (parent) {
-                this.editForm = roleEntity();
+                this.editForm = userEntity();
                 this.modal = true;
             },
             save: function () {
@@ -202,42 +229,6 @@
                 this.editForm = row;
                 this.modal = true;
             },
-
-            //绑定菜单
-            bindMenu: function (row) {
-                var self = this;
-                this.curRoleId = row.id;
-                $.ajaxGet(self.listMenuUrl, {roleId: row.id}, function (rs) {
-                    if (rs.code == "0000") {
-                        self.menuList = rs.data;
-                    }
-                });
-
-                this.bindMenuModal = true;
-            },
-            saveBindMenus: function () {
-                var self = this;
-                var params = {
-                    roleId: this.curRoleId,
-                    menuIds: [],
-                }
-                var chkNodes = this.$refs.treeMenu.getCheckedNodes();
-                chkNodes.forEach(function (node) {
-                    params.menuIds.push(node.id);
-                })
-                $.ajaxPostBody(this.saveRoleMenuUrl, JSON.stringify(params), function (rs) {
-                    if (rs.code != "0000") {
-                        self.$Message.error(rs.msg);
-                    } else {
-                        self.$Message.success("操作成功");
-                    }
-                    self.bindMenuModal = false;
-                })
-            },
-            cancelBindMenus: function () {
-
-            },
-
 
         }
     });

@@ -33,7 +33,6 @@ public class PlatformUser implements java.io.Serializable, UserDetails {
 	private String id;// 主键ID
 	private String username;// 账号
 	private String password;// 密码
-	private Date createTime;// 创建时间
 	private boolean enabled;// 是否启用
 	private boolean accountNonExpired;// 账号是否没有过期
 	private boolean credentialsNonExpired;// 证书是否没过期
@@ -47,6 +46,11 @@ public class PlatformUser implements java.io.Serializable, UserDetails {
 	private String contactInformation;// 联系方式
 	private String departmentId;// 部门ID
 	private String positionId;// 岗位ID
+
+	private Date createTime;
+	private Date modifyTime;// 修改时间
+	private String createUser;
+	private String modifyUser;
 
 	public PlatformUser() {
 	}
@@ -133,16 +137,6 @@ public class PlatformUser implements java.io.Serializable, UserDetails {
 		this.accountNonLocked = accountNonLocked;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "create_time")
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
 	@Transient
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
@@ -207,4 +201,43 @@ public class PlatformUser implements java.io.Serializable, UserDetails {
 		this.positionId = positionId;
 	}
 
+
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "create_time", length = 19)
+	public Date getCreateTime() {
+		return this.createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modify_time", length = 19)
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+
+	@Column(name = "create_user", length = 50)
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
+	@Column(name = "modify_user", length = 50)
+	public String getModifyUser() {
+		return modifyUser;
+	}
+
+	public void setModifyUser(String modifyUser) {
+		this.modifyUser = modifyUser;
+	}
 }

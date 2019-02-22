@@ -64,7 +64,7 @@ custom:
     accessDeniedPage: /accessDenied
     logoutUrl: /logout
     permitAll: /loginForm
-    ignoreAll: /resources/**,/favicon.ico
+    ignoreAll: /resources/**,/favicon.ico,/platform/attachment/**
   schedule:
     cron-on: false
     cron-test: 10 10 17 2 * ?

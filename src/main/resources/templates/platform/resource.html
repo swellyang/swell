@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>角色管理</title>
+    <title>资源管理</title>
     <link th:href="@{/resources/iview/styles/iview.css}" rel="stylesheet">
     <style scoped>
         [v-cloak] {
@@ -28,27 +28,19 @@
             </i-col>
         </i-row>
     </div>
-    <modal v-model="modal" title="编辑角色" @on-ok="save" @on-cancel="cancel">
+    <modal v-model="modal" title="编辑资源" @on-ok="save" @on-cancel="cancel">
         <div :style="{ height:modalHeight+'px'}" style="padding: 10px 20px;max-width:1000px;margin:auto;overflow: auto;">
             <i-form ref="editForm" :model="editForm" :label-width="80" style="padding: 10px 20px;">
-                <form-item label="角色名称">
-                    <i-input type="text" v-model="editForm.name" placeholder="角色名称"></i-input>
+                <form-item label="资源名称">
+                    <i-input type="text" v-model="editForm.name" placeholder="资源名称"></i-input>
                 </form-item>
-                <form-item label="角色代码">
-                    <i-input type="text" v-model="editForm.code" placeholder="角色代码"></i-input>
-                </form-item>
-                <form-item label="状态">
-                    <i-switch v-model="editForm.status" :true-value="trueValue" :false-value="falseValue"></i-switch>
+                <form-item label="资源地址">
+                    <i-input type="text" v-model="editForm.url" placeholder="资源地址"></i-input>
                 </form-item>
             </i-form>
         </div>
     </modal>
 
-    <modal v-model="bindMenuModal" title="绑定菜单" @on-ok="saveBindMenus" @on-cancel="cancelBindMenus">
-        <div :style="{ height:modalHeight+'px'}" style="padding: 10px 20px;max-width:1000px;margin:auto;overflow: auto;">
-            <tree ref="treeMenu" :data="menuList" show-checkbox multiple></tree>
-        </div>
-    </modal>
 </div>
 
 <script type="text/javascript" th:src="@{/resources/js/jquery.min.js}"></script>
@@ -57,12 +49,11 @@
 <script type="text/javascript" th:src="@{/resources/iview/iview.min.js}"></script>
 <script type="text/javascript">
 
-    var roleEntity = function () {
+    var resourcesEntity = function () {
         return {
             id: "",
             name: "",
-            code: "",
-            status: YesOrNo.yes,
+            url: "",
         }
     }
 
@@ -70,24 +61,17 @@
         el: '#app',
         data: {
             //
-            listUrl: __webRoot + "/platform/role/list",
-            saveUrl: __webRoot + "/platform/role/save",
-            saveRoleMenuUrl: __webRoot + "/platform/role/saveRoleMenu",
-            listMenuUrl: __webRoot + "/platform/menu/treeData",
+            listUrl: __webRoot + "/platform/resource/list",
+            saveUrl: __webRoot + "/platform/resource/save",
+            deleteUrl: __webRoot + "/platform/resource/delete",
             //
             tableHeight: 200,
             modal: false,
-            bindMenuModal: false,
-            modalHeight: 500,
-
-
-            curRoleId: "",
+            modalHeight: 200,
 
             dataList: [],
-            menuList: [],
-            editForm: roleEntity(),
-            trueValue: YesOrNo.yes,
-            falseValue: YesOrNo.no,
+            resourceList: [],
+            editForm: resourcesEntity(),
             columns: [{
                 title: '序号',
                 key: 'id',
@@ -95,26 +79,11 @@
                 align: "center",
                 type: "index"
             }, {
-                title: '角色名称',
+                title: '资源名称',
                 key: 'name',
             }, {
-                title: '角色代码',
-                key: 'code'
-            }, {
-                title: '状态',
-                key: 'status',
-                align: "center",
-                width: 120,
-                render: function (h, params) {
-                    var color = params.row.status === YesOrNo.yes ? 'success' : 'error';
-                    var text = params.row.status === YesOrNo.yes ? '正常' : '禁用';
-                    return h('tag', {
-                        props: {
-                            type: "dot",
-                            color: color
-                        }
-                    }, text);
-                }
+                title: '资源地址',
+                key: 'url'
             }, {
                 title: '创建时间',
                 align: "center",
@@ -144,27 +113,37 @@
                         }
                     }, '编辑'));
 
-                    btns.push(h('Button', {
+                    btns.push(h('Poptip', {
                         props: {
-                            type: 'primary',
-                            size: 'small'
+                            "placement": "top-end",
+                            "confirm": true,
+                            "title": '确定删除?',
+                            "ok-text": "确定",
+                            "cancel-text": "取消"
                         },
                         style: {
-                            marginRight: '5px'
+                            //textAlign: 'left'
                         },
                         on: {
-                            click: function () {
-                                app.bindMenu(params.row)
+                            "on-ok": function () {
+                                app.remove(params.row)
+                            },
+                            "on-cancel": function () {
                             }
                         }
-                    }, '菜单'));
+                    }, [h('Button', {
+                        props: {
+                            "type": 'error',
+                            "size": 'small'
+                        }
+                    }, '删除')]));
                     return h('div', [btns]);
                 }
             }]
         },
         mounted: function () {
             this.tableHeight = $(window).innerHeight() - 60;
-            this.modalHeight = $(window).innerHeight() * 0.6;
+            //this.modalHeight = $(window).innerHeight() * 0.6;
             this.loadDataList();
         },
         methods: {
@@ -177,7 +156,7 @@
                 });
             },
             add: function (parent) {
-                this.editForm = roleEntity();
+                this.editForm = resourcesEntity();
                 this.modal = true;
             },
             save: function () {
@@ -203,40 +182,17 @@
                 this.modal = true;
             },
 
-            //绑定菜单
-            bindMenu: function (row) {
+            remove: function (row) {
                 var self = this;
-                this.curRoleId = row.id;
-                $.ajaxGet(self.listMenuUrl, {roleId: row.id}, function (rs) {
-                    if (rs.code == "0000") {
-                        self.menuList = rs.data;
-                    }
-                });
-
-                this.bindMenuModal = true;
-            },
-            saveBindMenus: function () {
-                var self = this;
-                var params = {
-                    roleId: this.curRoleId,
-                    menuIds: [],
-                }
-                var chkNodes = this.$refs.treeMenu.getCheckedNodes();
-                chkNodes.forEach(function (node) {
-                    params.menuIds.push(node.id);
-                })
-                $.ajaxPostBody(this.saveRoleMenuUrl, JSON.stringify(params), function (rs) {
+                $.ajaxPost(self.deleteUrl, {id: row.id}, function (rs) {
                     if (rs.code != "0000") {
                         self.$Message.error(rs.msg);
                     } else {
                         self.$Message.success("操作成功");
                     }
-                    self.bindMenuModal = false;
-                })
-            },
-            cancelBindMenus: function () {
-
-            },
+                    self.loadDataList();
+                });
+            }
 
 
         }

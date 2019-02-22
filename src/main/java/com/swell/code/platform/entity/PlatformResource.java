@@ -29,6 +29,7 @@ public class PlatformResource implements java.io.Serializable {
 	private String name;
 	private String url;
 	private Date createTime;
+	private String createUser;
 	
 	private boolean checked;
 
@@ -99,5 +100,12 @@ public class PlatformResource implements java.io.Serializable {
 	}
 
 
-	
+	@Column(name = "create_user", length = 200)
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
 }

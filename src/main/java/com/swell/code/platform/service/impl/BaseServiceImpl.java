@@ -1,7 +1,9 @@
 package com.swell.code.platform.service.impl;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -104,6 +106,24 @@ public class BaseServiceImpl<T, ID extends Serializable, R extends BaseRepositor
 			nativeQuery.setParameter(i, args[i]);
 		}
 		nativeQuery.executeUpdate();
+	}
+
+	@Override
+	public List<Object[]> queryPage(String sql, Map<String, Object> paramMap, int pageNumber, int pageSize) {
+		Query nativeQuery = entityManager.createNativeQuery(sql);
+		if (null != paramMap && paramMap.size() >0){
+			Iterator<Map.Entry<String, Object>> iterator = paramMap.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry<String, Object> entry = iterator.next();
+				String key = entry.getKey();
+				Object value = entry.getValue();
+				nativeQuery.setParameter(key, value);
+			}
+		}
+		int from = (pageNumber-1)*pageSize;
+		nativeQuery.setFirstResult(from);
+		nativeQuery.setMaxResults(pageSize);
+		return nativeQuery.getResultList();
 	}
 
 }

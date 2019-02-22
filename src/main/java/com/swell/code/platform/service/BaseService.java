@@ -2,6 +2,7 @@ package com.swell.code.platform.service;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,9 @@ public interface BaseService<T, ID extends Serializable, R extends BaseRepositor
 
 	Page<T> findAll(Pageable pageable, Example<T> example);
 
-	List<Object[]> query(String sql, Object... args);
-	
 	void execute(String sql, Object... args);
+
+	List<Object[]> query(String sql, Object... args);
+
+	List<Object[]> queryPage(String sql, Map<String, Object> paramMap, int pageNumber, int pageSize);
 }

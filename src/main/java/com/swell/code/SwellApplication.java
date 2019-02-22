@@ -1,5 +1,10 @@
 package com.swell.code;
 
+import com.swell.code.business.dao.Car;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -9,11 +14,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 
 @Controller
 @EnableScheduling
 @SpringBootApplication
-public class SwellApplication {
+public class SwellApplication implements ApplicationRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(SwellApplication.class, args);
@@ -49,5 +55,21 @@ public class SwellApplication {
         pool.setPoolSize(20);
         pool.setThreadNamePrefix("swell-task");
         return pool;
+    }
+
+    @Bean
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
+
+    @Autowired
+    @Qualifier("baoma")
+    private Car car;
+
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        System.out.println("Do Something ... After Application Runner");
+        System.out.println(car.getName());
     }
 }
