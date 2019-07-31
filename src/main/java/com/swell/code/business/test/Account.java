@@ -1,7 +1,7 @@
 package com.swell.code.business.test;
 
 public class Account {
-    private volatile int money = 100;
+    private int money = 100;
 
     public int getMoney() {
         return money;
@@ -13,6 +13,7 @@ public class Account {
 
     public void addMoney(int m, String name) {
         money += m;
-        System.out.println(name + "---" + money);
+        System.out.println(name + "---" + Thread.currentThread().getName() + ":" + money);
     }
+
 }
