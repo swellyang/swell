@@ -2,13 +2,13 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" path="src/main/test"/>
+	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/swell/src/main/java"/>
-	<classpathentry kind="src" path="/swell/src/main/resources"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_77/lib/jconsole.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_77/lib/tools.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-starter-data-jpa:2.0.4.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-starter:2.0.4.RELEASE"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot:2.0.4.RELEASE"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-autoconfigure:2.0.4.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-starter-logging:2.0.4.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: ch.qos.logback:logback-classic:1.2.3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: ch.qos.logback:logback-core:1.2.3"/>
@@ -69,7 +69,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.apache.tomcat.embed:tomcat-embed-el:8.5.32"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.apache.tomcat.embed:tomcat-embed-websocket:8.5.32"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-starter-test:2.0.4.RELEASE"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-test:2.0.4.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-test-autoconfigure:2.0.4.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: com.jayway.jsonpath:json-path:2.4.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: net.minidev:json-smart:2.3"/>
@@ -89,6 +88,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework:spring-jcl:5.0.8.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework:spring-test:5.0.8.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.xmlunit:xmlunit-core:2.5.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-devtools:2.0.4.RELEASE"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot:2.0.4.RELEASE"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-autoconfigure:2.0.4.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.security:spring-security-test:5.0.7.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.security:spring-security-core:5.0.7.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-starter-freemarker:2.0.4.RELEASE"/>
@@ -108,5 +110,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.apache.poi:poi-ooxml-schemas:3.15"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.apache.xmlbeans:xmlbeans:2.6.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: stax:stax-api:1.0.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.springframework.boot:spring-boot-test:2.0.4.RELEASE"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

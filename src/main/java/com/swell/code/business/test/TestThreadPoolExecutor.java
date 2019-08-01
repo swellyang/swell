@@ -4,12 +4,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class Test3 {
+public class TestThreadPoolExecutor {
 
     public static void main(String[] args) {
         int corePoolSize = 10;//正常线程池大小
         int maximumPoolSize = 20;//最大线程池大小，当线程池达到正常大小并且等待队列已经满的时候，会自动增加线程到最大线程数量
-        long keepAliveTime = 200;
+        long keepAliveTime = 500;
         int queueSize = 200;//等待队列大小，可以根据该值大小做预警功能
         ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(queueSize), new ThreadPoolExecutor.AbortPolicy());
